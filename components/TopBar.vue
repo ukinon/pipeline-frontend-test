@@ -7,10 +7,10 @@ console.log(user);
 </script>
 
 <template>
-  <div class="bg-white p-4 flex justify-end items-center">
-    <div class="flex items-center">
+  <div class="bg-white p-4 flex justify-end items-center z-[99]">
+    <div class="flex items-center gap-5">
       <svg
-        class="w-6 h-6 text-black mr-4"
+        class="w-6 h-6 text-black"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -24,8 +24,15 @@ console.log(user);
         />
       </svg>
       <span class="text-black"
-        >{{ user?.email }}({{ user?.app_metadata.org }})</span
+        >{{ user?.email }}({{
+          user?.app_metadata.org.name
+            ? user?.app_metadata.org.name
+            : user?.app_metadata.org
+        }})</span
       >
+      <span class="text-black font-bold space-x-5">{{
+        user?.app_metadata.role
+      }}</span>
     </div>
   </div>
 </template>

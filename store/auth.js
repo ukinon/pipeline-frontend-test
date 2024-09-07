@@ -12,11 +12,7 @@ export const useAuthStore = defineStore("auth", {
   },
   actions: {
     async login(email, password) {
-      const runtimeConfig = useRuntimeConfig();
-      const supabase = createClient(
-        runtimeConfig.public.supabaseUrl,
-        runtimeConfig.public.supabaseAnonKey
-      );
+      const { $supabase: supabase } = useNuxtApp();
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
