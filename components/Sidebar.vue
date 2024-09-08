@@ -1,5 +1,4 @@
 <script setup>
-const route = useRoute();
 import { ref } from "vue";
 
 const hovered = ref(false);

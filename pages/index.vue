@@ -161,7 +161,7 @@ onMounted(() => {
       Loading...
     </div>
     <div v-else>
-      <div class="grid grid-cols-1 md:grid-cols- 2 gap-8 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         <div class="bg-white rounded-lg shadow-md p-6">
           <h2 class="text-xl font-semibold mb-4">Stock Price Chart</h2>
           <canvas ref="stockChart"></canvas>

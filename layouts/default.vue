@@ -9,7 +9,7 @@
 
     <Sidebar
       :class="[
-        { block: sidebarOpen, hidden: !sidebarOpen },
+        { flex: sidebarOpen, hidden: !sidebarOpen },
         'md:block w-fit transition-all fixed bg-white h-screen',
       ]"
       @toggle="toggleSidebar"
@@ -19,7 +19,7 @@
         { 'opacity-50': sidebarOpen },
         'pt-[5vh] bg-zinc-100 min-h-screen transition-opacity',
       ]"
-      @click="toggleSidebar"
+      @click="handleClick"
     >
       <slot />
     </div>
@@ -30,6 +30,12 @@
 import { ref } from "vue";
 
 const sidebarOpen = ref(false);
+
+const handleClick = () => {
+  if (sidebarOpen.value) {
+    toggleSidebar();
+  }
+};
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
