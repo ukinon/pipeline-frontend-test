@@ -8,13 +8,15 @@ definePageMeta({
   middleware: ["auth"],
 });
 
-// Reactive variables
+// References to chart canvases
 const stockChart = ref(null);
 const volumeChart = ref(null);
 const combinedChart = ref(null);
+
+// Storage for stock data
 const stocksData = ref({});
 
-// Fetch data from API
+// Fetch stock data from API
 const { data, pending } = useFetch("https://www.alphavantage.co/query", {
   params: {
     function: "TIME_SERIES_DAILY",
@@ -23,7 +25,7 @@ const { data, pending } = useFetch("https://www.alphavantage.co/query", {
   },
 });
 
-// Functions to create charts
+// Create stock price chart
 const createStockChart = (dates, prices) => {
   new Chart(stockChart.value, {
     type: "line",
@@ -49,6 +51,7 @@ const createStockChart = (dates, prices) => {
   });
 };
 
+// Create trading volume chart
 const createVolumeChart = (dates, volumes) => {
   new Chart(volumeChart.value, {
     type: "bar",
@@ -73,6 +76,7 @@ const createVolumeChart = (dates, volumes) => {
   });
 };
 
+// Calculate Simple Moving Average (SMA)
 const calculateSMA = (data, window_size) => {
   const r_avgs = [];
   for (let i = 0; i <= data.length - window_size; i++) {
@@ -86,12 +90,13 @@ const calculateSMA = (data, window_size) => {
   return r_avgs;
 };
 
-const createCombinedChart = (dates, prices, volumes) => {
-  const sma = calculateSMA(prices, 7); // 7-day SMA
+// Create combined chart with stock prices and SMA
+const createCombinedChart = (dates, prices) => {
+  const sma = calculateSMA(prices, 7);
   new Chart(combinedChart.value, {
     type: "line",
     data: {
-      labels: dates.slice(6), // Adjust for SMA array length
+      labels: dates.slice(6),
       datasets: [
         {
           label: "Stock Price",
@@ -139,13 +144,9 @@ onMounted(() => {
           parseInt(timeSeriesData[date]["5. volume"])
         );
 
-        console.log("Dates: ", dates);
-        console.log("Close Prices: ", closePrices);
-        console.log("Volumes: ", volumes);
-
         createStockChart(dates, closePrices);
         createVolumeChart(dates, volumes);
-        createCombinedChart(dates, closePrices, volumes);
+        createCombinedChart(dates, closePrices);
       }
     },
     { immediate: true }
@@ -160,7 +161,7 @@ onMounted(() => {
       Loading...
     </div>
     <div v-else>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols- 2 gap-8 mb-8">
         <div class="bg-white rounded-lg shadow-md p-6">
           <h2 class="text-xl font-semibold mb-4">Stock Price Chart</h2>
           <canvas ref="stockChart"></canvas>

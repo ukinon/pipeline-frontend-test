@@ -2,10 +2,12 @@
 import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
+// Define meta information for the page
 definePageMeta({
   middleware: ["auth", "rolecheck"],
 });
 
+// Columns configuration for the product table
 const columns = [
   { key: "id", label: "ID" },
   { key: "title", label: "Title" },
@@ -21,6 +23,11 @@ const limit = ref(parseInt(route.query.limit, 10) || 10);
 const totalPages = ref(0);
 const products = ref([]);
 
+/**
+ * Fetch products from the API with skip and limit parameters.
+ * @param {Number} skip - The number of items to skip.
+ * @param {Number} limitParam - The limit of items to fetch.
+ */
 const fetchProducts = async (skip, limitParam) => {
   const { data } = await useFetch(
     `https://dummyjson.com/products?skip=${skip}&limit=${limitParam}`
@@ -29,6 +36,11 @@ const fetchProducts = async (skip, limitParam) => {
   totalPages.value = Math.ceil(data.value.total / limitParam);
 };
 
+/**
+ * Update the router URL with the given page and limit parameters.
+ * @param {Number} pageParam - The current page.
+ * @param {Number} limitParam - The limit of items per page.
+ */
 const updateURL = (pageParam, limitParam) => {
   router
     .push({
@@ -44,6 +56,7 @@ const updateURL = (pageParam, limitParam) => {
     });
 };
 
+// Watch for changes in current page and limit to fetch products and update URL
 watch([currentPage, limit], ([newPage, newLimit]) => {
   const skip = (newPage - 1) * newLimit;
   fetchProducts(skip, newLimit);
@@ -51,12 +64,19 @@ watch([currentPage, limit], ([newPage, newLimit]) => {
   updateURL(newPage, newLimit);
 });
 
+/**
+ * Change the current page to the given page if it is within valid range.
+ * @param {Number} page - The page to change to.
+ */
 const changePage = (page) => {
   if (page > 0 && page <= totalPages.value) {
     currentPage.value = page;
   }
 };
 
+/**
+ * On component mount, initialize the URL parameters and fetch products.
+ */
 onMounted(() => {
   const pageFromURL = parseInt(route.query.page, 10);
   const limitFromURL = parseInt(route.query.limit, 10);

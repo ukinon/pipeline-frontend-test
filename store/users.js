@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { useAuthStore } from "./auth";
 import { createClient } from "@supabase/supabase-js";
 
 export const useUsersStore = defineStore("users", {
@@ -8,6 +7,12 @@ export const useUsersStore = defineStore("users", {
     totalPages: 0,
   }),
   actions: {
+    /**
+     * Fetch users from Supabase with pagination.
+     * @param {Number} page - The current page number.
+     * @param {Number} limit - The number of users per page.
+     * @return {Object} - Returns an object containing users and total pages.
+     */
     async fetchUsers(page, limit) {
       const supabase = createClient(
         useRuntimeConfig().public.supabaseUrl,
@@ -26,6 +31,12 @@ export const useUsersStore = defineStore("users", {
 
       return { users: this.users, totalPages: this.totalPages };
     },
+
+    /**
+     * Add a new user to Supabase.
+     * @param {Object} userData - The data for the new user.
+     * @return {Object} - Returns the data of the created user.
+     */
     async addUser(userData) {
       const supabase = createClient(
         useRuntimeConfig().public.supabaseUrl,
@@ -40,6 +51,13 @@ export const useUsersStore = defineStore("users", {
       if (error) throw error;
       return data;
     },
+
+    /**
+     * Update an existing user's information.
+     * @param {String} userId - The ID of the user to update.
+     * @param {Object} userData - The new data for the user.
+     * @return {Object} - Returns the updated user data.
+     */
     async updateUser(userId, userData) {
       const supabase = createClient(
         useRuntimeConfig().public.supabaseUrl,
@@ -52,6 +70,11 @@ export const useUsersStore = defineStore("users", {
       if (error) throw error;
       return data;
     },
+
+    /**
+     * Delete a user by their ID.
+     * @param {String} userId - The ID of the user to delete.
+     */
     async deleteUser(userId) {
       const supabase = createClient(
         useRuntimeConfig().public.supabaseUrl,

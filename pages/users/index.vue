@@ -55,7 +55,7 @@ import { useUsersStore } from "~/store/users";
 import { useAuthStore } from "~/store/auth";
 import Pagination from "~/components/Pagination.vue";
 import UserModal from "~/components/UserModal.vue";
-import { storeToRefs } from "pinia"; // assuming you're using Pinia
+import { storeToRefs } from "pinia";
 
 definePageMeta({
   middleware: ["auth", "rolecheck"],
@@ -79,6 +79,13 @@ const roleHierarchy = {
   admin: 1,
   super: 2,
 };
+
+/**
+ * Check if the user's role is lower or equal to the current user's role.
+ * @param {String} userRole - The role of the user.
+ * @param {String} currentRole - The role of the current user.
+ * @return {Boolean} - Returns true if userRole is lower or equal to currentRole.
+ */
 const isRoleLower = (userRole, currentRole) => {
   return roleHierarchy[userRole] <= roleHierarchy[currentRole];
 };
@@ -91,11 +98,15 @@ const columns = [
   { key: "actions", label: "Actions" },
 ];
 
+// Watch for changes in current page and limit to fetch users and update URL
 watch([currentPage, limit], async () => {
   await fetchUsers();
   updateURL(currentPage.value, limit.value);
 });
 
+/**
+ * Fetch users from the store and update the users and totalPages state.
+ */
 const fetchUsers = async () => {
   const { users: fetchedUsers, totalPages: total } =
     await usersStore.fetchUsers(currentPage.value, limit.value);
@@ -103,6 +114,11 @@ const fetchUsers = async () => {
   totalPages.value = total;
 };
 
+/**
+ * Update the router URL with the given page and limit parameters.
+ * @param {Number} pageParam - The current page.
+ * @param {Number} limitParam - The limit of items per page.
+ */
 const updateURL = (pageParam, limitParam) => {
   router.push({
     name: route.name,
@@ -110,32 +126,56 @@ const updateURL = (pageParam, limitParam) => {
   });
 };
 
+/**
+ * Change the current page to the given page if it is within valid range.
+ * @param {Number} page - The page to change to.
+ */
 const changePage = (page) => {
   if (page > 0 && page <= totalPages.value) {
     currentPage.value = page;
   }
 };
 
+/**
+ * Open the user modal with the
+ * provided user data.
+ * @param {Object|null} user - The user to open in the modal. Defaults to null for a new user.
+ */
 const openUserModal = (user = null) => {
   selectedUser.value = user;
   showUserModal.value = true;
 };
 
+/**
+ * Handle the event when a new user is added.
+ * Closes the user modal and fetches the updated user list.
+ */
 const handleUserAdded = async () => {
   showUserModal.value = false;
   await fetchUsers();
 };
 
+/**
+ * Handle the event when a user is updated.
+ * Closes the user modal and fetches the updated user list.
+ */
 const handleUserUpdated = async () => {
   showUserModal.value = false;
   await fetchUsers();
 };
 
+/**
+ * Handle the event when a user is deleted.
+ * Closes the user modal and fetches the updated user list.
+ */
 const handleUserDeleted = async () => {
   showUserModal.value = false;
   await fetchUsers();
 };
 
+/**
+ * On component mount, update the URL with current pagination parameters and fetch users.
+ */
 onMounted(async () => {
   updateURL(currentPage.value, limit.value);
   await fetchUsers();
