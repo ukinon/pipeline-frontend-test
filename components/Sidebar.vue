@@ -24,7 +24,7 @@ const links = [
 
 <template>
   <div
-    class="bg-white p-3 flex flex-col justify-between gap-4 text-black h-screen ease-in-out duration-300 transition-all z-[9999]"
+    class="bg-white p-3 flex flex-col justify-between gap-4 text-black h-[100dvh] ease-in-out duration-300 transition-all z-[9999]"
     :class="{ hovered: hovered, 'pr-10': hovered }"
     @mouseenter="hovered = true"
     @mouseleave="hovered = false"

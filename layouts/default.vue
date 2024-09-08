@@ -10,7 +10,7 @@
     <Sidebar
       :class="[
         { flex: sidebarOpen, hidden: !sidebarOpen },
-        'md:block w-fit transition-all fixed bg-white h-screen',
+        ' w-fit transition-all fixed bg-white h-[100dvh]',
       ]"
       @toggle="toggleSidebar"
     />
