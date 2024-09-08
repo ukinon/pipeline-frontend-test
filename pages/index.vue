@@ -3,15 +3,19 @@ import { ref, onMounted, watch } from "vue";
 import { useFetch } from "#app";
 import Chart from "chart.js/auto";
 
+// Define page metadata
 definePageMeta({
   middleware: ["auth"],
 });
 
+// Reactive variables
 const stockChart = ref(null);
 const volumeChart = ref(null);
 const combinedChart = ref(null);
+const stocksData = ref({});
 
-const { data } = useFetch("https://www.alphavantage.co/query", {
+// Fetch data from API
+const { data, pending } = useFetch("https://www.alphavantage.co/query", {
   params: {
     function: "TIME_SERIES_DAILY",
     symbol: "IBM",
@@ -19,8 +23,7 @@ const { data } = useFetch("https://www.alphavantage.co/query", {
   },
 });
 
-const stocksData = ref({});
-
+// Functions to create charts
 const createStockChart = (dates, prices) => {
   new Chart(stockChart.value, {
     type: "line",
@@ -71,16 +74,14 @@ const createVolumeChart = (dates, volumes) => {
 };
 
 const calculateSMA = (data, window_size) => {
-  let r_avgs = [],
-    avg_prev = 0;
+  const r_avgs = [];
   for (let i = 0; i <= data.length - window_size; i++) {
-    let curr_avg = 0.0,
-      t = i + window_size;
+    let curr_avg = 0.0;
+    const t = i + window_size;
     for (let k = i; k < t && k <= data.length; k++) {
       curr_avg += data[k] / window_size;
     }
     r_avgs.push(curr_avg);
-    avg_prev = curr_avg;
   }
   return r_avgs;
 };
@@ -119,6 +120,7 @@ const createCombinedChart = (dates, prices, volumes) => {
   });
 };
 
+// Handle mounting and data fetching
 onMounted(() => {
   watch(
     () => pending.value,
@@ -143,7 +145,7 @@ onMounted(() => {
 
         createStockChart(dates, closePrices);
         createVolumeChart(dates, volumes);
-        createCombinedChart(dates, closePrices, volumes); // Create the new chart
+        createCombinedChart(dates, closePrices, volumes);
       }
     },
     { immediate: true }
@@ -154,7 +156,7 @@ onMounted(() => {
 <template>
   <div class="container mx-auto p-3 px-0 max-w-[80vw]">
     <h1 class="text-3xl text-black font-bold mb-8">IBM Stocks📈</h1>
-    <div v-if="pending.value" class="text-center text-xl font-medium">
+    <div v-if="pending?.value" class="text-center text-xl font-medium">
       Loading...
     </div>
     <div v-else>
