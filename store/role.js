@@ -13,7 +13,6 @@ export const useRolesStore = defineStore("roles", {
         page: page,
         per_page: limit,
       });
-      console.log(data);
 
       if (error) throw error;
 
@@ -24,23 +23,65 @@ export const useRolesStore = defineStore("roles", {
     },
     async addRoles(rolesData) {
       const { $supabase: supabase } = useNuxtApp();
-      const { data, error } = await supabase.from("roles").insert(rolesData);
-      if (error) throw error;
-      return data;
+      const toast = useToast();
+      try {
+        const { data, error } = await supabase.from("roles").insert(rolesData);
+        if (error) throw error;
+        toast.add({ title: "Success", description: "Role added successfully" });
+        return data;
+      } catch (error) {
+        toast.add({
+          title: "Error",
+          description: "Failed to add role",
+          color: "red",
+        });
+        throw error;
+      }
     },
     async updateRoles(rolesId, rolesData) {
       const { $supabase: supabase } = useNuxtApp();
-      const { data, error } = await supabase
-        .from("roles")
-        .update(rolesData)
-        .eq("id", rolesId);
-      if (error) throw error;
-      return data;
+      const toast = useToast();
+      try {
+        const { data, error } = await supabase
+          .from("roles")
+          .update(rolesData)
+          .eq("id", rolesId);
+        if (error) throw error;
+        toast.add({
+          title: "Success",
+          description: "Role updated successfully",
+        });
+        return data;
+      } catch (error) {
+        toast.add({
+          title: "Error",
+          description: "Failed to update role",
+          color: "red",
+        });
+        throw error;
+      }
     },
     async deleteRoles(rolesId) {
       const { $supabase: supabase } = useNuxtApp();
-      const { error } = await supabase.from("roles").delete().eq("id", rolesId);
-      if (error) throw error;
+      const toast = useToast();
+      try {
+        const { error } = await supabase
+          .from("roles")
+          .delete()
+          .eq("id", rolesId);
+        if (error) throw error;
+        toast.add({
+          title: "Success",
+          description: "Role deleted successfully",
+        });
+      } catch (error) {
+        toast.add({
+          title: "Error",
+          description: "Failed to delete role",
+          color: "red",
+        });
+        throw error;
+      }
     },
   },
 });

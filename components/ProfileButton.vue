@@ -1,10 +1,14 @@
 <script setup>
 import { useAuthStore } from "~/store/auth";
+import { useRouter } from "vue-router";
+
 const props = defineProps({
   hovered: Boolean,
 });
 
 const { user } = storeToRefs(useAuthStore());
+const authStore = useAuthStore();
+const router = useRouter();
 
 console.log(user);
 
@@ -16,7 +20,7 @@ const items = [
         src: "https://avatars.githubusercontent.com/u/739984?v=4",
       },
       click: () => {
-        navigateTo("/profile");
+        router.push("/profile");
       },
     },
   ],
@@ -24,9 +28,9 @@ const items = [
     {
       label: "Sign Out",
       icon: "i-heroicons-signout",
-      click: () => {
-        useAuthStore().clearSession();
-        navigateTo("/login");
+      click: async () => {
+        await authStore.clearSession();
+        router.push("/login");
       },
     },
   ],

@@ -19,13 +19,24 @@ export const useAuthStore = defineStore("auth", {
      */
     async login(email, password) {
       const { $supabase: supabase } = useNuxtApp();
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      console.log(data);
-      this.setSession(data);
+      const toast = useToast();
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        console.log(data);
+        this.setSession(data);
+      } catch (error) {
+        console.error("Login failed:", error.message);
+        toast.add({
+          title: "Login Failed",
+          description: error.message || "An error occurred during login",
+          color: "red",
+        });
+        throw error;
+      }
     },
 
     /**
