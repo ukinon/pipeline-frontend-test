@@ -47,8 +47,6 @@ const rolesStore = useRolesStore();
 console.log(props);
 
 const name = ref("");
-const currentUser = computed(() => authStore.user);
-const currentRole = computed(() => currentUser.value.app_metadata.role);
 
 const isEditing = computed(() => !!props.roles);
 

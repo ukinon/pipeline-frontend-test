@@ -4,9 +4,7 @@ const props = defineProps({
   hovered: Boolean,
 });
 
-const authStore = useAuthStore();
-const user = computed(() => authStore.user);
-const router = useRouter();
+const { user } = storeToRefs(useAuthStore());
 
 console.log(user);
 
@@ -17,6 +15,9 @@ const items = [
       avatar: {
         src: "https://avatars.githubusercontent.com/u/739984?v=4",
       },
+      click: () => {
+        navigateTo("/profile");
+      },
     },
   ],
   [
@@ -24,8 +25,8 @@ const items = [
       label: "Sign Out",
       icon: "i-heroicons-signout",
       click: () => {
-        authStore.clearSession();
-        router.push("/login");
+        useAuthStore().clearSession();
+        navigateTo("/login");
       },
     },
   ],
@@ -40,7 +41,9 @@ const items = [
   >
     <div class="flex flex-row items-center gap-2 py-3 rounded-lg w-full">
       <UAvatar src="https://avatars.githubusercontent.com/u/739984?v=4" />
-      <p v-if="hovered">{{ user?.app_metadata.role }}</p>
+      <p v-bind:class="{ 'lg:hidden': !hovered }">
+        {{ user?.app_metadata.role }}
+      </p>
     </div>
   </UDropdown>
 </template>

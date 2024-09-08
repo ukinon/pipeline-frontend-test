@@ -46,6 +46,7 @@ import { useAuthStore } from "~/store/auth";
 
 definePageMeta({
   layout: "login",
+  middleware: ["auth"],
 });
 
 const formState = ref({

@@ -36,7 +36,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useAuthStore } from "~/store/auth";
 import { useOrgsStore } from "~/store/orgs";
 
 const props = defineProps({
@@ -47,8 +46,6 @@ const orgsStore = useOrgsStore();
 console.log(props);
 
 const name = ref("");
-const currentUser = computed(() => authStore.user);
-const currentRole = computed(() => currentUser.value.app_metadata.role);
 
 const isEditing = computed(() => !!props.orgs);
 

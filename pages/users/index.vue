@@ -5,18 +5,20 @@
       <UButton
         @click="openUserModal()"
         v-if="
-          currentUser.app_metadata.role == 'admin' ||
-          currentUser.app_metadata.role == 'super'
+          currentUser?.app_metadata?.role === 'admin' ||
+          currentUser?.app_metadata?.role === 'super'
         "
-        >Add User</UButton
       >
+        Add User
+      </UButton>
     </div>
     <UTable :columns="columns" :rows="users" class="bg-gray-800 rounded-xl">
       <template
         #actions-data="{ row }"
         v-if="
-          currentUser.app_metadata.role == 'admin' ||
-          currentUser.app_metadata.role == 'super'
+          currentUser?.app_metadata &&
+          (currentUser.app_metadata?.role === 'admin' ||
+            currentUser.app_metadata?.role === 'super')
         "
       >
         <UButton
@@ -53,6 +55,7 @@ import { useUsersStore } from "~/store/users";
 import { useAuthStore } from "~/store/auth";
 import Pagination from "~/components/Pagination.vue";
 import UserModal from "~/components/UserModal.vue";
+import { storeToRefs } from "pinia"; // assuming you're using Pinia
 
 definePageMeta({
   middleware: ["auth", "rolecheck"],
@@ -69,7 +72,7 @@ const totalPages = ref(0);
 const users = ref([]);
 const showUserModal = ref(false);
 const selectedUser = ref(null);
-const currentUser = computed(() => authStore.user);
+const { user: currentUser } = storeToRefs(authStore);
 
 const roleHierarchy = {
   user: 0,
@@ -88,9 +91,9 @@ const columns = [
   { key: "actions", label: "Actions" },
 ];
 
-watch([currentPage, limit], async ([newPage, newLimit]) => {
+watch([currentPage, limit], async () => {
   await fetchUsers();
-  updateURL(newPage, newLimit);
+  updateURL(currentPage.value, limit.value);
 });
 
 const fetchUsers = async () => {

@@ -6,6 +6,7 @@ export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
     token: null,
+    isLoading: true,
   }),
   getters: {
     isAuthenticated: (state) => !!state.user,
@@ -38,17 +39,20 @@ export const useAuthStore = defineStore("auth", {
       authCookie.value = null;
     },
     async initializeFromCookie() {
+      this.isLoading = true;
       const authCookie = useCookie("auth_token");
       this.token = authCookie.value;
 
       if (this.token) {
         await this.fetchUserDetails();
       }
+      this.isLoading = false;
     },
 
     async fetchUserDetails() {
       if (!this.token) {
         console.error("Auth session missing!");
+        this.isLoading = false;
         return;
       }
 
@@ -65,15 +69,20 @@ export const useAuthStore = defineStore("auth", {
         }
       );
 
-      const { data: user, error } = await supabase.auth.getUser();
-      console.log(user);
+      try {
+        const { data: user, error } = await supabase.auth.getUser();
+        console.log(user);
 
-      if (error) {
-        console.error("Failed to fetch user details:", error);
-        return;
+        if (error) {
+          console.error("Failed to fetch user details:", error);
+        } else {
+          this.user = user.user;
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      } finally {
+        this.isLoading = false;
       }
-
-      this.user = user.user;
     },
   },
 });

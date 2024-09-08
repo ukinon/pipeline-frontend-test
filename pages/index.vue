@@ -3,11 +3,15 @@ import { ref, onMounted, watch } from "vue";
 import { useFetch } from "#app";
 import Chart from "chart.js/auto";
 
+definePageMeta({
+  middleware: ["auth"],
+});
+
 const stockChart = ref(null);
 const volumeChart = ref(null);
 const combinedChart = ref(null);
 
-const { data, pending } = useFetch("https://www.alphavantage.co/query", {
+const { data } = useFetch("https://www.alphavantage.co/query", {
   params: {
     function: "TIME_SERIES_DAILY",
     symbol: "IBM",

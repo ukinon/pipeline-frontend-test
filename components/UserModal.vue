@@ -95,8 +95,8 @@ const orgsStore = useOrgsStore();
 const email = ref("");
 const password = ref("");
 const role = ref("");
-const currentUSer = computed(() => authStore.user);
-const currentRole = computed(() => currentUSer.value.app_metadata.role);
+const { user: currentUser } = storeToRefs(authStore);
+const currentRole = computed(() => currentUser.value.app_metadata.role);
 const orgs = ref("");
 const orgsOptions = ref([]);
 
@@ -143,6 +143,7 @@ const submitForm = async () => {
         role: role.value,
         org: orgs.value,
       },
+      role: "authenticated",
     });
     emit("user-updated");
   } else {

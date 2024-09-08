@@ -47,7 +47,7 @@ const links = [
         @click="navigateTo(link.to)"
       >
         <UIcon v-if="link.icon" :name="link.icon" size="25" />
-        <span v-if="hovered">
+        <span v-bind:class="{ 'lg:hidden': !hovered }">
           {{ link.label }}
         </span>
       </div>

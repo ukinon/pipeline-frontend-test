@@ -4,14 +4,14 @@
       <h1 class="text-3xl font-bold text-black">Roles</h1>
       <UButton
         @click="openOrgModal()"
-        v-if="currentUser.app_metadata.role === 'super'"
+        v-if="currentUser?.app_metadata?.role === 'super'"
         >Add Roles</UButton
       >
     </div>
     <UTable :columns="columns" :rows="roles" class="bg-gray-800 rounded-xl">
       <template
         #actions-data="{ row }"
-        v-if="currentUser.app_metadata.role === 'super'"
+        v-if="currentUser?.app_metadata?.role === 'super'"
       >
         <UButton
           @click="openOrgModal(row)"
@@ -59,7 +59,7 @@ const totalPages = ref(0);
 const roles = ref([]);
 const showOrgModal = ref(false);
 const selectedOrg = ref(null);
-const currentUser = computed(() => authStore.user);
+const { user: currentUser } = storeToRefs(authStore);
 
 const columns = [
   { key: "id", label: "ID" },

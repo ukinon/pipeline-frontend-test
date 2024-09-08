@@ -4,14 +4,14 @@
       <h1 class="text-3xl font-bold text-black">Organizations</h1>
       <UButton
         @click="openOrgModal()"
-        v-if="currentUser.app_metadata.role === 'super'"
+        v-if="currentUser?.app_metadata?.role === 'super'"
         >Add Orgs</UButton
       >
     </div>
     <UTable :columns="columns" :rows="orgs" class="bg-gray-800 rounded-xl">
       <template
         #actions-data="{ row }"
-        v-if="currentUser.app_metadata.role === 'super'"
+        v-if="currentUser?.app_metadata?.role === 'super'"
       >
         <UButton
           @click="openOrgModal(row)"
@@ -48,7 +48,6 @@ definePageMeta({
   middleware: ["auth", "rolecheck"],
 });
 
-const authStore = useAuthStore();
 const orgsStore = useOrgsStore();
 const route = useRoute();
 const router = useRouter();
@@ -59,7 +58,7 @@ const totalPages = ref(0);
 const orgs = ref([]);
 const showOrgModal = ref(false);
 const selectedOrg = ref(null);
-const currentUser = computed(() => authStore.user);
+const { user: currentUser } = storeToRefs(useAuthStore());
 
 const columns = [
   { key: "id", label: "ID" },

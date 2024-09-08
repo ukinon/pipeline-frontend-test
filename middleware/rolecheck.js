@@ -2,13 +2,22 @@ import { useAuthStore } from "~/store/auth";
 
 export default defineNuxtRouteMiddleware((to, from) => {
   const authStore = useAuthStore();
-  const user = computed(() => authStore.user);
-  console.log(user.value.app_metadata.role);
+  const { user, isLoading } = storeToRefs(authStore);
 
-  if (
-    user.value.app_metadata?.role !== "admin" &&
-    user.value.app_metadata.role !== "super"
-  ) {
-    return abortNavigation();
-  }
+  watchEffect(() => {
+    if (!isLoading.value) {
+      if (
+        user.value &&
+        user.value.app_metadata &&
+        user.value.app_metadata.role
+      ) {
+        const userRole = user.value.app_metadata.role;
+        if (userRole !== "admin" && userRole !== "super") {
+          return abortNavigation();
+        }
+      } else {
+        return navigateTo("/");
+      }
+    }
+  });
 });

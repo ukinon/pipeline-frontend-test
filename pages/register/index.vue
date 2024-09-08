@@ -52,7 +52,7 @@ import { useRouter } from "vue-router";
 
 definePageMeta({
   layout: "login",
-  middleware: "",
+  middleware: ["auth"],
 });
 
 const { $supabase } = useNuxtApp();
