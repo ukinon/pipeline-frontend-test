@@ -1,16 +1,26 @@
 <template>
   <div class="h-screen">
-    <TopBar class="h-[5vh] fixed w-[100vw] px-8">
-      <button @click="toggleSidebar" class="md:hidden">
+    <div class="flex flex-row justify-between bg-white fixed">
+      <button @click="toggleSidebar" class="md:hidden text-black pl-3">
         <UIcon name="i-heroicons-bars-3" size="25" />
       </button>
-    </TopBar>
+      <TopBar class="h-[5vh] w-[95vw] md:w-[100vw] px-8" />
+    </div>
+
     <Sidebar
-      :isOpen="sidebarOpen"
+      :class="[
+        { block: sidebarOpen, hidden: !sidebarOpen },
+        'md:block w-fit transition-all fixed bg-white h-screen',
+      ]"
       @toggle="toggleSidebar"
-      class="w-fit transition-all fixed bg-white h-screen hidden md:flex"
     />
-    <div class="pt-[5dvh] bg-zinc-100 min-h-screen">
+    <div
+      :class="[
+        { 'opacity-50': sidebarOpen },
+        'pt-[5vh] bg-zinc-100 min-h-screen transition-opacity',
+      ]"
+      @click="toggleSidebar"
+    >
       <slot />
     </div>
   </div>
